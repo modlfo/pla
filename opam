@@ -13,4 +13,12 @@ build: [
 ]
 install: [make "install"]
 remove: [make "uninstall"]
-depends: ["ocamlfind" "cppo" "ocamlbuild"]
+build-doc: [
+  make "doc"
+]
+depends: [
+  "ocamlbuild" {build}
+  "ocamlfind"  {build & >= "1.6.0"}
+  "cppo"       {build}
+]
+available: [ ocaml-version >= "4.02.1" & opam-version >= "1.2" ]
