@@ -1,0 +1,31 @@
+# OASIS_START
+# DO NOT EDIT (digest: 4d6e35f5cb01dd44dfc7b5ab3a0f85f5)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
+# useless stuff for the build process
+true: annot, bin_annot
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library pla
+"lib/pla.cmxs": use_pla
+# Library ppx
+"ppx/ppx.cmxs": use_ppx
+# Executable pla_ppx
+<ppx/Pla_ppx.{native,byte}>: package(compiler-libs.common)
+<ppx/Pla_ppx.{native,byte}>: use_pla
+<ppx/Pla_ppx.{native,byte}>: use_ppx
+<ppx/*.ml{,i,y}>: package(compiler-libs.common)
+<ppx/*.ml{,i,y}>: use_pla
+<ppx/*.ml{,i,y}>: use_ppx
+# OASIS_STOP
+true : cppo_V_OCAML
+<lib> : include
+<test/*.ml> : package(pla.ppx)
