@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="PlaBuffer.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Pla" rel="Chapter" href="Pla.html">
+<link title="PlaBuffer" rel="Chapter" href="PlaBuffer.html"><link title="Builtin templates" rel="Section" href="#6_Builtintemplates">
+<link title="Templates of basic types" rel="Section" href="#6_Templatesofbasictypes">
+<link title="Functions to combine templates" rel="Section" href="#6_Functionstocombinetemplates">
+<link title="Printing of templates" rel="Section" href="#6_Printingoftemplates">
+<title>Pla</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="PlaBuffer.html" title="PlaBuffer">Next</a>
+</div>
+<h1>Module <a href="type_Pla.html">Pla</a></h1>
+
+<pre><span class="keyword">module</span> Pla: <code class="code"><span class="keyword">sig</span></code> <a href="Pla.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info module top">
+Main module<br>
+</div>
+<hr width="100%">
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = <code class="type"><a href="PlaBuffer.html#TYPEt">PlaBuffer.t</a> -> unit</code> </pre>
+<div class="info ">
+Main template type<br>
+</div>
+
+<br>
+<h6 id="6_Builtintemplates">Builtin templates</h6><br>
+
+<pre><span id="VALunit"><span class="keyword">val</span> unit</span> : <code class="type"><a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+Empty template<br>
+</div>
+
+<pre><span id="VALnewline"><span class="keyword">val</span> newline</span> : <code class="type"><a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+Template for a new line<br>
+</div>
+
+<pre><span id="VALcomma"><span class="keyword">val</span> comma</span> : <code class="type"><a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+Template for a comma ','<br>
+</div>
+
+<pre><span id="VALcommaspace"><span class="keyword">val</span> commaspace</span> : <code class="type"><a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+Template for a comma followed by a space ', '<br>
+</div>
+
+<pre><span id="VALsemi"><span class="keyword">val</span> semi</span> : <code class="type"><a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+Template for a semicolon ';'<br>
+</div>
+
+<pre><span id="VALspace"><span class="keyword">val</span> space</span> : <code class="type"><a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+Template for a white space ' '<br>
+</div>
+<br>
+<h6 id="6_Templatesofbasictypes">Templates of basic types</h6><br>
+
+<pre><span id="VALstring"><span class="keyword">val</span> string</span> : <code class="type">string -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">string str</code> makes a template from a string <code class="code">str</code><br>
+</div>
+
+<pre><span id="VALint"><span class="keyword">val</span> int</span> : <code class="type">int -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">int i</code> makes a template from an integer value <code class="code">i</code><br>
+</div>
+
+<pre><span id="VALfloat"><span class="keyword">val</span> float</span> : <code class="type">float -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">float f</code> makes a template from a float value<br>
+</div>
+<br>
+<h6 id="6_Functionstocombinetemplates">Functions to combine templates</h6><br>
+
+<pre><span id="VALappend"><span class="keyword">val</span> append</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">append t1 t2</code> makes a new template with the contents of <code class="code">t1</code> followed by the contents of <code class="code">t2</code><br>
+</div>
+
+<pre><span id="VAL(++)"><span class="keyword">val</span> (++)</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">t1 ++ t2</code> equivalent to <code class="code">append t1 t2</code><br>
+</div>
+
+<pre><span id="VALjoin"><span class="keyword">val</span> join</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">join elems</code> makes a new template by appending the list <code class="code">elems</code> of templates<br>
+</div>
+
+<pre><span id="VALmap_join"><span class="keyword">val</span> map_join</span> : <code class="type">('a -> <a href="Pla.html#TYPEt">t</a>) -> 'a list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">map_join f elems</code> makes a new template by applying the function <code class="code">f</code> to the list <code class="code">elems</code> and appending them<br>
+</div>
+
+<pre><span id="VALmap_sep"><span class="keyword">val</span> map_sep</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> ('a -> <a href="Pla.html#TYPEt">t</a>) -> 'a list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">map_sep sep f elems</code> makes a new template by applying the function <code class="code">f</code> to the list <code class="code">elems</code> and appending them separated by the template <code class="code">sep</code><br>
+</div>
+
+<pre><span id="VALmap_sep_all"><span class="keyword">val</span> map_sep_all</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> ('a -> <a href="Pla.html#TYPEt">t</a>) -> 'a list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">map_sep_all sep f elems</code> similar to <code class="code">map_sep sep f elems</code> but also adds the separator after the last element<br>
+</div>
+
+<pre><span id="VALindent"><span class="keyword">val</span> indent</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">indent t</code> makes an indented block with the contents of the template <code class="code">t</code><br>
+</div>
+
+<pre><span id="VALwrap"><span class="keyword">val</span> wrap</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">wrap left right t</code> makes new template wrapped by the <code class="code">left</code> and <code class="code">right</code> templates<br>
+</div>
+<br>
+<h6 id="6_Printingoftemplates">Printing of templates</h6><br>
+
+<pre><span id="VALprint"><span class="keyword">val</span> print</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<code class="code">print t</code> returns the contents template <code class="code">t</code> as a string<br>
+</div>
+</body></html>
