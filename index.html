@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Pla by modlfo</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Pla</h1>
+        <p>Pla is a simple library and ppx syntax extension to create composable templates based on verbatim strings</p>
+
+        <p class="view"><a href="https://github.com/modlfo/pla">View the Project on GitHub <small>modlfo/pla</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/modlfo/pla/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/modlfo/pla/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/modlfo/pla">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><img src="/resources/pla.png?raw=true" alt="Pla" title="Pla"></p>
+
+<p>Pla is a simple library and ppx syntax extension to create composable templates based on verbatim strings.</p>
+
+<h2>
+<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basic usage</h2>
+
+<p>To create templates from basic types you can use the following functions:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> <span class="pl-en">str_template</span>   : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> <span class="pl-c1">Pla.</span><span class="pl-k">string</span> <span class="pl-s"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span> ;;
+<span class="pl-k">let</span> <span class="pl-en">int_template</span>   : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> <span class="pl-c1">Pla.</span><span class="pl-k">int</span> <span class="pl-c1">1</span> ;;
+<span class="pl-k">let</span> <span class="pl-en">float_template</span> : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> <span class="pl-c1">Pla.</span><span class="pl-k">float</span> <span class="pl-c1">1.0</span> ;;</pre></div>
+
+<p>Templates from verbatim strings are created using the markers <code>{pla|</code> to start the string and <code>|pla}</code> to close it. For example:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> <span class="pl-en">code_template</span> : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> {pla<span class="pl-k">|</span> you can put anything <span class="pl-s"><span class="pl-pds">"</span>here<span class="pl-pds">"</span></span> <span class="pl-k">!!!</span> <span class="pl-k">|</span>pla} ;;
+</pre></div>
+
+<p>To compose templates you can use the special markers <code>&lt;#</code> and <code>#&gt;</code>. For example:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> <span class="pl-en">name</span>  : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> <span class="pl-c1">Pla.</span><span class="pl-k">string</span> <span class="pl-s"><span class="pl-pds">"</span>Bob<span class="pl-pds">"</span></span> ;;
+<span class="pl-k">let</span> <span class="pl-en">value</span> : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> <span class="pl-c1">Pla.</span><span class="pl-k">int</span> <span class="pl-c1">10</span> ;;
+<span class="pl-k">let</span> <span class="pl-en">text</span>  : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> {pla<span class="pl-k">|</span><span class="pl-en">The</span> name is <span class="pl-k">&lt;</span><span class="pl-k">#name</span>#<span class="pl-k">&gt;</span> <span class="pl-k">and</span> <span class="pl-en">the</span> <span class="pl-v">value</span> <span class="pl-v">is</span> &lt;<span class="pl-k">#value</span>#&gt;|<span class="pl-v">pla</span>} ;;</pre></div>
+
+<p>When printing the template the markers <code>&lt;#name#&gt;</code> and <code>&lt;#value#&gt;</code> will be replaced by the contents of the templates <code>name</code> and <code>value</code> found in the scope.</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">#</span> <span class="pl-c1">Pla.</span>print text ;;
+<span class="pl-k">-</span> : bytes <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>The name is Bob and the value is 10<span class="pl-pds">"</span></span></pre></div>
+
+<p>There exist special markers to print values other than <code>Pla.t</code>. To print integers, strings and floats (without needing to convert them to template first) use the following markers:</p>
+
+<ul>
+<li>
+<code>&lt;#...#s&gt;</code> for string values</li>
+<li>
+<code>&lt;#...#i&gt;</code> for int values</li>
+<li>
+<code>&lt;#...#f&gt;</code> for float values</li>
+</ul>
+
+<p>For example:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> <span class="pl-en">name</span>      : <span class="pl-k">string </span><span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>Bob<span class="pl-pds">"</span></span> ;;
+<span class="pl-k">let</span> <span class="pl-en">int_val</span>   : <span class="pl-k">int    </span><span class="pl-k">=</span> <span class="pl-c1">10</span> ;;
+<span class="pl-k">let</span> <span class="pl-en">float_val</span> : <span class="pl-k">float  </span><span class="pl-k">=</span> <span class="pl-c1">10.0</span> ;;
+<span class="pl-k">let</span> <span class="pl-en">text</span>      : <span class="pl-k">Pla.t  </span><span class="pl-k">=</span> {pla<span class="pl-k">|</span> <span class="pl-en">String</span> <span class="pl-k">&lt;</span><span class="pl-k">#name</span>#s<span class="pl-k">&gt;</span>, <span class="pl-k">int</span> value <span class="pl-k">&lt;</span><span class="pl-k">#int_val</span>#i<span class="pl-k">&gt;</span>, <span class="pl-k">float</span> value <span class="pl-k">&lt;</span><span class="pl-k">#float_val</span>#f<span class="pl-k">&gt;</span><span class="pl-k">|</span>pla} ;;</pre></div>
+
+<p>This will produce the following string:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">#</span> <span class="pl-c1">Pla.</span>print text ;;
+<span class="pl-k">-</span> : bytes <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>String Bob, int value 10, float value 10.0<span class="pl-pds">"</span></span></pre></div>
+
+<p>The markers are type-checked so if the types do not match you will get a compile error.</p>
+
+<p>There are two special markers more:</p>
+
+<ul>
+<li>
+<code>&lt;#...#+&gt;</code> this will indent all the contents of the template</li>
+<li>
+<code>&lt;#&gt;</code> this will explicitly insert a new line</li>
+</ul>
+
+<p>For example:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> <span class="pl-en">lines</span> : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> {pla<span class="pl-k">|</span><span class="pl-en">Line</span> <span class="pl-c1">1</span><span class="pl-k">&lt;</span>#<span class="pl-k">&gt;</span><span class="pl-en">Line</span> <span class="pl-c1">2</span><span class="pl-k">|</span>pla} ;;
+<span class="pl-k">let</span> <span class="pl-en">text</span>  : <span class="pl-k">Pla.t </span><span class="pl-k">=</span> {pla<span class="pl-k">|</span><span class="pl-en">The</span> lines <span class="pl-s1">are</span>:<span class="pl-k">&lt;</span><span class="pl-k">#lines</span>#<span class="pl-k">+&gt;|</span>pla} ;;</pre></div>
+
+<p>will produce the text:</p>
+
+<pre><code>The lines are:
+   Line 1
+   Line 2
+</code></pre>
+
+<p>The Pla library provides a few useful functions</p>
+
+<ul>
+<li>
+<code>join</code> : appends a list of templates.</li>
+<li>
+<code>map_join</code> : applies the function <code>f</code> to each element and appends all the templates.</li>
+<li>
+<code>map_sep</code> : applies the function <code>f</code> to each element and appends all the templates separated by the template <code>sep</code>.</li>
+</ul>
+
+<p>Pla also provides a few predefined templates:</p>
+
+<ul>
+<li>
+<code>unit</code> : empty template</li>
+<li>
+<code>newline</code> : to print a new lines</li>
+<li>
+<code>comma</code> : to print a comma</li>
+<li>
+<code>semi</code> : to print a semicolon</li>
+</ul>
+
+<p>Note: You can find more information in the documentation.</p>
+
+<p>One example of using the previous functions is the following:</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> data <span class="pl-k">=</span> [<span class="pl-c1">1</span>; <span class="pl-c1">2</span>; <span class="pl-c1">3</span>] ;;
+<span class="pl-k">let</span> text <span class="pl-k">=</span> <span class="pl-c1">Pla.</span>map_sep <span class="pl-c1">Pla.</span>comma <span class="pl-c1">Pla.</span><span class="pl-k">int</span> data ;; <span class="pl-c">(* produces: 1,2,3 *)</span></pre></div>
+
+<h4>
+<a id="features-and-limitations" class="anchor" href="#features-and-limitations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features and Limitations</h4>
+
+<p>Pla does not provide advanced pretty-printing features like the ones available in libraries like Format or others. On the other hand, it produces fast code whose performance is near to manually written code. Internally, every template is a function that writes text to a <code>Buffer.t</code>.</p>
+
+<h2>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing</h2>
+
+<pre><code>$ opam install pla
+</code></pre>
+
+<h3>
+<a id="manual-installation" class="anchor" href="#manual-installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Manual Installation</h3>
+
+<pre><code>$ ./configure --prefix &lt;#your ocaml directory#&gt;
+$ make
+$ make install
+</code></pre>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
+
+<h4>
+<a id="compiler" class="anchor" href="#compiler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compiler</h4>
+
+<ul>
+<li>OCaml      &gt;= 4.02</li>
+</ul>
+
+<h4>
+<a id="libraries" class="anchor" href="#libraries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Libraries</h4>
+
+<ul>
+<li>cppo</li>
+<li>ocamlfind</li>
+<li>ocamlbuild</li>
+</ul>
+
+<h2>
+<a id="syntax-for-pla-templates" class="anchor" href="#syntax-for-pla-templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Syntax for Pla Templates</h2>
+
+<p>Templates are delimited by <code>{pla|</code> and <code>|pla}</code>.</p>
+
+<div class="highlight highlight-source-ocaml"><pre><span class="pl-k">let</span> _ <span class="pl-k">=</span> {pla<span class="pl-k">|</span>
+<span class="pl-en">This</span> is a verbatim <span class="pl-k">string</span>.
+<span class="pl-en">You</span> can put whatever text you want.
+<span class="pl-en">The</span> compiler will create the corresponding <span class="pl-k">string</span>.
+<span class="pl-en">You</span> don't need <span class="pl-k">to</span> escape the <span class="pl-s"><span class="pl-pds">"</span>quotes<span class="pl-pds">"</span></span>.
+<span class="pl-k">|</span>pla};;</pre></div>
+
+<h4>
+<a id="markers" class="anchor" href="#markers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Markers</h4>
+
+<p>The following markers in a <code>{pla|...|pla}</code> template are replaced:</p>
+
+<ul>
+<li>
+<code>&lt;#&gt;</code>       - inserts a new line</li>
+<li>
+<code>&lt;#name#&gt;</code>  - inserts the contents of a <code>Pla.t</code> value</li>
+<li>
+<code>&lt;#name#s&gt;</code> - inserts the contents of a <code>string</code> value</li>
+<li>
+<code>&lt;#name#i&gt;</code> - inserts the contents of a <code>int</code> value</li>
+<li>
+<code>&lt;#name#f&gt;</code> - inserts the contents of a <code>float</code> value</li>
+<li>
+<code>&lt;#name#+&gt;</code> - creates an indented block and print the contents of a <code>Pla.t</code> value</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/modlfo">modlfo</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
