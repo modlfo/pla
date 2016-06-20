@@ -1,0 +1,16 @@
+opam-version: "1.2"
+name: "pla"
+version: "1.0"
+maintainer: "Leonardo Laguna Ruiz <modlfo@gmail.com>"
+author: "Leonardo Laguna Ruiz <modlfo@gmail.com>"
+homepage: "https://modlfo.github.io/pla/"
+bug-reports: "https://github.com/modlfo/pla/issues"
+license: "MIT"
+dev-repo: "https://github.com/modlfo/pla"
+build: [
+  ["./configure" "--prefix=%{prefix}%"]
+  [make]
+]
+install: [make "install"]
+remove: [make "uninstall"]
+depends: ["ocamlfind" "cppo" "ocamlbuild"]
