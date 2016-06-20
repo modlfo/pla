@@ -2,6 +2,9 @@
 
 Pla is a simple library and ppx syntax extension to create composable templates based on verbatim strings.
 
+[Project page](https://modlfo.github.io/pla/)
+
+[Full API](https://modlfo.github.io/pla/pla_ppx.docdir/Pla.html)
 
 ## Basic usage
 
