@@ -95,6 +95,15 @@ let data = [1; 2; 3] ;;
 let text = Pla.map_sep Pla.comma Pla.int data ;; (* produces: 1,2,3 *)
 ```
 
+#### Adding Pla to your Project
+
+In order to create templates with `{pla|...|pla}` you need to preprocess the files with the ppx `pla.ppx` and link with the `pla` library. When using ocamlbuild this can be done by adding the following lines to the `_tags` file:
+```
+<*.ml>: package(pla.ppx)
+<*.byte>: package(pla)
+<*.native>: package(pla)
+```
+
 #### Features and Limitations
 
 Pla does not provide advanced pretty-printing features like the ones available in libraries like Format or others. On the other hand, it produces fast code whose performance is near to manually written code. Internally, every template is a function that writes text to a `Buffer.t`.
