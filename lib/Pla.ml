@@ -38,6 +38,12 @@ let space : t = fun buffer -> PlaBuffer.append buffer " "
 let string (s:string) : t =
    fun buffer -> PlaBuffer.append buffer s
 
+let quoted (s:string) : t =
+   fun buffer ->
+      PlaBuffer.append buffer "\"";
+      PlaBuffer.append buffer s;
+      PlaBuffer.append buffer "\""
+
 let int (i:int) : t =
    fun buffer -> PlaBuffer.append buffer (string_of_int i)
 

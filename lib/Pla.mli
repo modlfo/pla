@@ -53,6 +53,9 @@ val int : int -> t
 val float : float -> t
 (** [float f] makes a template from a float value *)
 
+val quoted : string -> t
+(** [quoted str] makes a template from a string [str] but the contents are quoted *)
+
 (** {6 Functions to combine templates} *)
 
 val append : t -> t -> t
