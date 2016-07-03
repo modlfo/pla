@@ -87,3 +87,6 @@ val wrap : t -> t -> t -> t
 
 val print : t -> string
 (** [print t] returns the contents template [t] as a string *)
+
+val write : string -> t -> unit
+(** [write file t] writes the contents of template [t] to file [file] *)

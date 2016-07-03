@@ -102,8 +102,12 @@ let (++) (t1:t) (t2:t) : t =
    append t1 t2
 
 let print (t:t) : string =
-   let buffer = PlaBuffer.empty () in
+   let buffer = PlaBuffer.newBuffer () in
    t buffer;
    PlaBuffer.contents buffer
 
+let write (file:string) (t:t) : unit =
+   let buffer = PlaBuffer.newFile file in
+   t buffer;
+   PlaBuffer.close buffer
 

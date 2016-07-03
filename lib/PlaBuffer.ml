@@ -17,28 +17,54 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *)
 
+type dest =
+   | File   of out_channel
+   | Buffer of Buffer.t
+
+
+let appendToBuff (d:dest) (s:string) : unit =
+   match d with
+   | File(c)   -> output_string c s
+   | Buffer(b) -> Buffer.add_string b s
+
+
 (** Text buffer use by Pla *)
 type t =
    {
-      buffer           : Buffer.t;
+      buffer           : dest;
       mutable indent   : int;
       mutable space    : string;
       mutable indented : bool;
    }
 
-let empty () =
+let newBuffer () =
    {
-      buffer   = Buffer.create 128;
+      buffer   = Buffer(Buffer.create 128);
+      indent   = 0;
+      space    = "";
+      indented = false;
+   }
+
+let newFile (file:string) =
+   {
+      buffer   = File(open_out file);
       indent   = 0;
       space    = "";
       indented = false;
    }
 
 let contents (t:t) : string =
-   Buffer.contents t.buffer
+   match t.buffer with
+   | Buffer(b) -> Buffer.contents b
+   | File _ -> ""
+
+let close (t:t) : unit =
+   match t.buffer with
+   | Buffer _ -> ()
+   | File(c) -> close_out c
 
 let newline (t:t) =
-   Buffer.add_string t.buffer "\n";
+   appendToBuff t.buffer "\n";
    t.indented <- false
 
 let indent (t:t) : unit =
@@ -54,9 +80,9 @@ let outdent (t:t) : unit =
 
 let append (t:t) (s:string) : unit =
    if not t.indented then begin
-      Buffer.add_string t.buffer t.space;
+      appendToBuff t.buffer t.space;
       t.indented <- true;
    end;
-   Buffer.add_string t.buffer s
+   appendToBuff t.buffer s
 
 
