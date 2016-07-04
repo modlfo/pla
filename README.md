@@ -6,6 +6,8 @@ Pla is a simple library and ppx syntax extension to create composable templates 
 
 [Full API](https://modlfo.github.io/pla/pla_ppx.docdir/Pla.html)
 
+[![Build Status](https://travis-ci.org/modlfo/pla.svg?branch=master)](https://travis-ci.org/modlfo/pla)
+
 ## Basic usage
 
 To create templates from basic types you can use the following functions:
