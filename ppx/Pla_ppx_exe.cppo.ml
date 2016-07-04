@@ -37,19 +37,19 @@ let pfloat  = makeLident "Pla.float"
 let pstring = makeLident "Pla.string"
 let unit    = Exp.construct (makeLident "()") None
 
-let offsetPosition (pos1:Lexing.position) (pos2:Lexing.position) : Lexing.position =
+let offsetPosition (displacement:int) (pos1:Lexing.position) (pos2:Lexing.position) : Lexing.position =
    Lexing.{
       pos1 with
       pos_lnum = pos1.pos_lnum + pos2.pos_lnum - 1;
       pos_bol  = pos1.pos_bol  + pos2.pos_bol;
-      pos_cnum = pos1.pos_cnum + pos2.pos_cnum + 5 ;
+      pos_cnum = pos1.pos_cnum + pos2.pos_cnum + displacement ;
    }
 
-let offsetLocation (loc1:Location.t) (loc2:Location.t) : Location.t =
+let offsetLocation (displacement:int) (loc1:Location.t) (loc2:Location.t) : Location.t =
    Location.{
       loc1 with
-      loc_start = offsetPosition loc1.loc_start loc2.loc_start;
-      loc_end   = offsetPosition loc1.loc_start loc2.loc_end;
+      loc_start = offsetPosition displacement loc1.loc_start loc2.loc_start;
+      loc_end   = offsetPosition displacement loc1.loc_start loc2.loc_end;
    }
 
 let mkVar (var_loc:Location.t) (v:string) =
@@ -70,7 +70,7 @@ let no_label = Nolabel
 let constString s = Const.string s
 #endif
 
-let makeExp (loc:Location.t) (s:Pla_tokens.s) : expression =
+let makeExp (loc:Location.t) (displacement:int) (s:Pla_tokens.s) : expression =
    match s with
    | Pla_tokens.N ->
       Exp.apply (Exp.ident newline) [no_label, Exp.ident buffer]
@@ -81,7 +81,7 @@ let makeExp (loc:Location.t) (s:Pla_tokens.s) : expression =
    | Pla_tokens.T txt ->
       Exp.apply (Exp.ident append) [no_label, Exp.ident buffer; no_label, Exp.constant(constString txt)]
    | Pla_tokens.V(v,vartype,loc_ref) ->
-      let var_loc = offsetLocation loc loc_ref in
+      let var_loc = offsetLocation displacement loc loc_ref in
       let v_exp = Exp.constraint_ ~loc:var_loc (Exp.ident ~loc:var_loc (mkVar var_loc v)) (template_type vartype) in
       match vartype with
       | Pla_tokens.Template -> Exp.apply v_exp [no_label, Exp.ident buffer]
@@ -89,12 +89,12 @@ let makeExp (loc:Location.t) (s:Pla_tokens.s) : expression =
       | Pla_tokens.Float    -> Exp.apply (Exp.ident pfloat) [no_label,v_exp; no_label, Exp.ident buffer]
       | Pla_tokens.String   -> Exp.apply (Exp.ident pstring) [no_label,v_exp; no_label, Exp.ident buffer]
 
-let makeExpSeq (loc:Location.t) (sl:Pla_tokens.s list) : expression =
-   List.fold_right (fun a s -> Exp.sequence (makeExp loc a) s) sl unit
+let makeExpSeq (loc:Location.t) (displacement:int) (sl:Pla_tokens.s list) : expression =
+   List.fold_right (fun a s -> Exp.sequence (makeExp loc displacement a) s) sl unit
 
-let makeTemplateExp (loc:Location.t) (sl:Pla_tokens.s list) : expression =
+let makeTemplateExp (loc:Location.t) (displacement:int) (sl:Pla_tokens.s list) : expression =
    let pat = Pat.var (Location.mknoloc buffer_id) in
-   let fun_ = Exp.fun_ ~loc no_label None pat (makeExpSeq loc sl) in
+   let fun_ = Exp.fun_ ~loc no_label None pat (makeExpSeq loc displacement sl) in
    Exp.constraint_ ~loc fun_ (template_type Pla_tokens.Template)
 
 let pla_mapper argv =
@@ -102,15 +102,31 @@ let pla_mapper argv =
      expr = fun mapper expr ->
         match expr with
         | {
+            pexp_desc =
            #if OCAML_VERSION < (4, 03, 0)
-             pexp_desc = Pexp_constant (Const_string (text, Some "pla"))
+              Pexp_constant (Const_string (text, Some "pla"))
            #else
-             pexp_desc = Pexp_constant (Pconst_string (text, Some "pla"))
+              Pexp_constant (Pconst_string (text, Some "pla"))
            #endif
            ; pexp_loc = loc;
           } ->
             let tokens = PlaLex.tokenize text in
-            let pla_exp = makeTemplateExp loc tokens in
+            let displacement = 5 in
+            let pla_exp = makeTemplateExp loc displacement tokens in
+            pla_exp
+
+        | { pexp_desc =
+          #if OCAML_VERSION < (4, 03, 0)
+            Pexp_extension
+              ({txt = "pla"},PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Const_string(text, _)) ; pexp_loc = loc }, _ ) }])
+          #else
+            Pexp_extension
+              ({txt = "pla"},PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Pconst_string (text, _)) ; pexp_loc = loc }, _) }])
+          #endif
+          } ->
+            let tokens = PlaLex.tokenize text in
+            let displacement = 2 in
+            let pla_exp = makeTemplateExp loc displacement tokens in
             pla_exp
 
          | x -> default_mapper.expr mapper x;
