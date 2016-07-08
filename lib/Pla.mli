@@ -74,6 +74,7 @@ val indent : t -> t
 
 
 (** {6 Functions to append templates} *)
+
 val append : t -> t -> t
 (** [append t1 t2] makes a new template with the contents of [t1] followed by the contents of [t2] *)
 
