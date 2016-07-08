@@ -38,7 +38,7 @@ let space : t = fun buffer -> PlaBuffer.append buffer " "
 let string (s:string) : t =
    fun buffer -> PlaBuffer.append buffer s
 
-let quoted (s:string) : t =
+let string_quoted (s:string) : t =
    fun buffer ->
       PlaBuffer.append buffer "\"";
       PlaBuffer.append buffer s;
@@ -50,9 +50,34 @@ let int (i:int) : t =
 let float (f:float) : t =
    fun buffer -> PlaBuffer.append buffer (string_of_float f)
 
-(* Functions to combine templates *)
+(* Functions to wrap templates *)
 
-(** [append t1 t2] makes a new template with the contents of [t1] followed by the contents of [t2] *)
+let quote (t:t) : t =
+   fun buffer ->
+      PlaBuffer.append buffer "\"";
+      t buffer;
+      PlaBuffer.append buffer "\""
+
+let parenthesize (t:t) : t =
+   fun buffer ->
+      PlaBuffer.append buffer "(";
+      t buffer;
+      PlaBuffer.append buffer ")"
+
+let indent (t:t) : t =
+   fun buffer ->
+      PlaBuffer.indent buffer;
+      t buffer;
+      PlaBuffer.outdent buffer
+
+let wrap (l:t) (r:t) (t:t) : t =
+   fun buffer ->
+      l buffer;
+      t buffer;
+      r buffer
+
+(* Functions to append templates *)
+
 let append (t1:t) (t2:t) : t =
    fun buffer ->
       t1 buffer;
@@ -60,6 +85,20 @@ let append (t1:t) (t2:t) : t =
 
 let join (elems:t list) : t =
    fun buffer -> List.iter (fun a -> a buffer) elems
+
+let join_sep (sep:t) (elems:'a list) : t =
+   fun buffer ->
+      let rec loop = function
+         | []   -> ()
+         | [h]  -> h buffer
+         | h::t ->
+            h buffer;
+            sep buffer;
+            loop t
+      in loop elems
+
+let join_sep_all (sep:t) (elems:'a list) : t =
+   fun buffer -> List.iter (fun h -> h buffer; sep buffer) elems
 
 let map_join (f:'a -> t) (elems:'a list) : t =
    fun buffer -> List.iter (fun a -> f a buffer) elems
@@ -76,27 +115,7 @@ let map_sep (sep:t) (f:'a -> t) (elems:'a list) : t =
       in loop elems
 
 let map_sep_all (sep:t) (f:'a -> t) (elems:'a list) : t =
-   fun buffer ->
-      let rec loop = function
-         | []   -> ()
-         | h::t ->
-            (f h) buffer;
-            sep buffer;
-            loop t
-      in loop elems
-
-
-let indent (t:t) : t =
-   fun buffer ->
-      PlaBuffer.indent buffer;
-      t buffer;
-      PlaBuffer.outdent buffer
-
-let wrap (l:t) (r:t) (t:t) : t =
-   fun buffer ->
-      l buffer;
-      t buffer;
-      r buffer
+   fun buffer -> List.iter (fun h -> (f h) buffer; sep buffer) elems
 
 let (++) (t1:t) (t2:t) : t =
    append t1 t2

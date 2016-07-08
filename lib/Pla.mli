@@ -42,6 +42,7 @@ val semi : t
 val space : t
 (** Template for a white space ' ' *)
 
+
 (** {6 Templates of basic types} *)
 
 val string : string -> t
@@ -53,11 +54,26 @@ val int : int -> t
 val float : float -> t
 (** [float f] makes a template from a float value *)
 
-val quoted : string -> t
-(** [quoted str] makes a template from a string [str] but the contents are quoted *)
+val string_quoted : string -> t
+(** [string_quoted str] makes a template from a string [str] but the contents are quoted *)
 
-(** {6 Functions to combine templates} *)
 
+(** {6 Functions to wrap templates} *)
+
+val wrap : t -> t -> t -> t
+(** [wrap left right t] makes new template wrapped by the [left] and [right] templates *)
+
+val quote : t -> t
+(** [quote t] makes a new template wrapped with double quotes *)
+
+val parenthesize : t -> t
+(** [parenthesize t] makes a new template wrapped by parenthesis *)
+
+val indent : t -> t
+(** [indent t] makes an indented block with the contents of the template [t] *)
+
+
+(** {6 Functions to append templates} *)
 val append : t -> t -> t
 (** [append t1 t2] makes a new template with the contents of [t1] followed by the contents of [t2] *)
 
@@ -67,6 +83,12 @@ val (++) : t -> t -> t
 val join : t list -> t
 (** [join elems] makes a new template by appending the list [elems] of templates *)
 
+val join_sep : t -> t list -> t
+(** [join sep elems] makes a new template by appending the list [elems] of templates separated by [sep] *)
+
+val join_sep_all : t -> t list -> t
+(** [join_sep_all sep elems] similar to [join_sep sep elems] but also adds the separator after the last element *)
+
 val map_join : ('a -> t) -> 'a list -> t
 (** [map_join f elems] makes a new template by applying the function [f] to the list [elems] and appending them *)
 
@@ -75,12 +97,6 @@ val map_sep : t -> ('a -> t) -> 'a list -> t
 
 val map_sep_all : t -> ('a -> t) -> 'a list -> t
 (** [map_sep_all sep f elems] similar to [map_sep sep f elems] but also adds the separator after the last element *)
-
-val indent : t -> t
-(** [indent t] makes an indented block with the contents of the template [t] *)
-
-val wrap : t -> t -> t -> t
-(** [wrap left right t] makes new template wrapped by the [left] and [right] templates *)
 
 
 (** {6 Printing of templates} *)
