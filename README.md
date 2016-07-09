@@ -17,23 +17,27 @@ let str_template   : Pla.t = Pla.string "text" ;;
 let int_template   : Pla.t = Pla.int 1 ;;
 let float_template : Pla.t = Pla.float 1.0 ;;
 ```
-Templates from verbatim strings are created using the markers `{pla|` to start the string and `|pla}` to close it. For example:
+Templates from verbatim strings are created using the markers `[%pla{|` to start the string and `|}]` to close it. For example:
 
 ```ocaml
-let code_template : Pla.t = {pla| you can put anything "here" !!! |pla} ;;
-
+let code_template : Pla.t = [%pla{| you can put anything "here" !!! |}] ;;
 ```
 To compose templates you can use the special markers `<#` and `#>`. For example:
 ```ocaml
 let name  : Pla.t = Pla.string "Bob" ;;
 let value : Pla.t = Pla.int 10 ;;
-let text  : Pla.t = {pla|The name is <#name#> and the value is <#value#>|pla} ;;
+let text  : Pla.t = [%pla{|The name is <#name#> and the value is <#value#>|}] ;;
 ```
 When printing the template the markers `<#name#>` and `<#value#>` will be replaced by the contents of the templates `name` and `value` found in the scope.
 
 ```ocaml
 # Pla.print text ;;
 - : bytes = "The name is Bob and the value is 10"
+```
+Alternatively you can write a template to a file as follows
+```ocaml
+# Pla.write "file.txt" text ;;
+- : unit = ()
 ```
 
 There exist special markers to print values other than `Pla.t`. To print integers, strings and floats (without needing to convert them to template first) use the following markers:
@@ -48,7 +52,7 @@ For example:
 let name      : string = "Bob" ;;
 let int_val   : int    = 10 ;;
 let float_val : float  = 10.0 ;;
-let text      : Pla.t  = {pla| String <#name#s>, int value <#int_val#i>, float value <#float_val#f>|pla} ;;
+let text      : Pla.t  = [%pla{| String <#name#s>, int value <#int_val#i>, float value <#float_val#f>|}] ;;
 ```
 
 This will produce the following string:
@@ -66,8 +70,8 @@ There are two special markers more:
 
 For example:
 ```ocaml
-let lines : Pla.t = {pla|Line 1<#>Line 2|pla} ;;
-let text  : Pla.t = {pla|The lines are:<#lines#+>|pla} ;;
+let lines : Pla.t = [%pla{|Line 1<#>Line 2|}] ;;
+let text  : Pla.t = [%pla{|The lines are:<#lines#+>|}] ;;
 ```
 
 will produce the text:
@@ -99,7 +103,7 @@ let text = Pla.map_sep Pla.comma Pla.int data ;; (* produces: 1,2,3 *)
 
 #### Adding Pla to your Project
 
-In order to create templates with `{pla|...|pla}` you need to preprocess the files with the ppx `pla.ppx` and link with the `pla` library. When using ocamlbuild this can be done by adding the following lines to the `_tags` file:
+In order to create templates with `[%pla{|...|}]` you need to preprocess the files with the ppx `pla.ppx` and link with the `pla` library. When using ocamlbuild this can be done by adding the following lines to the `_tags` file:
 ```
 <*.ml>: package(pla.ppx)
 <*.byte>: package(pla)
@@ -139,20 +143,20 @@ $ make install
 
 ## Syntax for Pla Templates
 
-Templates are delimited by `{pla|` and `|pla}`.
+Templates are delimited by `[%pla{|` and `|}]`. Alternatively, you can use the syntax `{pla|` and `|pla}` to specify templates.
 
 ```ocaml
-let _ = {pla|
+let _ = [%pla{|
 This is a verbatim string.
 You can put whatever text you want.
 The compiler will create the corresponding string.
 You don't need to escape the "quotes".
-|pla};;
+|}];;
 ```
 
 #### Markers
 
-The following markers in a `{pla|...|pla}` template are replaced:
+The following markers in a `[%pla{|...|}]` template are replaced:
 
 - `<#>`       - inserts a new line
 - `<#name#>`  - inserts the contents of a `Pla.t` value
