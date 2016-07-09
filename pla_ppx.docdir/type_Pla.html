@@ -9,24 +9,30 @@
 <link title="PlaBuffer" rel="Chapter" href="PlaBuffer.html"><title>Pla</title>
 </head>
 <body>
-<code class="code"><span class="keyword">sig</span><br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t&nbsp;=&nbsp;<span class="constructor">PlaBuffer</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;unit&nbsp;:&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newline&nbsp;:&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;comma&nbsp;:&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;commaspace&nbsp;:&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi&nbsp;:&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;space&nbsp;:&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;string&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;int&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;float&nbsp;:&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;append&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;(&nbsp;++&nbsp;)&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;join&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;map_join&nbsp;:&nbsp;(<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;map_sep&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;map_sep_all&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;indent&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;wrap&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;print&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+<code class="code"><span class="keyword">sig</span>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t&nbsp;=&nbsp;<span class="constructor">PlaBuffer</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;unit&nbsp;:&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newline&nbsp;:&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;comma&nbsp;:&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;commaspace&nbsp;:&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi&nbsp;:&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;space&nbsp;:&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;string&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;int&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;float&nbsp;:&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;string_quoted&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;wrap&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;quote&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;parenthesize&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;indent&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;append&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;(&nbsp;++&nbsp;)&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;join&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;join_sep&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;join_sep_all&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;map_join&nbsp;:&nbsp;(<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;map_sep&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;map_sep_all&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;print&nbsp;:&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;write&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pla</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit
 <span class="keyword">end</span></code></body></html>

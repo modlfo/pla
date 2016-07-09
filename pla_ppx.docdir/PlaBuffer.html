@@ -23,12 +23,31 @@ Text buffer use by Pla<br>
 </div>
 <hr width="100%">
 
+<pre><code><span id="TYPEdest"><span class="keyword">type</span> <code class="type"></code>dest</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdest.File"><span class="constructor">File</span></span> <span class="keyword">of</span> <code class="type">Pervasives.out_channel</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdest.Buffer"><span class="constructor">Buffer</span></span> <span class="keyword">of</span> <code class="type">Buffer.t</code></code></td>
+
+</tr></table>
+
+
+
+<pre><span id="VALappendToBuff"><span class="keyword">val</span> appendToBuff</span> : <code class="type"><a href="PlaBuffer.html#TYPEdest">dest</a> -> string -> unit</code></pre>
 <pre><code><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = {</code></pre><table class="typetable">
 <tr>
 <td align="left" valign="top" >
 <code>&nbsp;&nbsp;</code></td>
 <td align="left" valign="top" >
-<code><span id="TYPEELTt.buffer">buffer</span>&nbsp;: <code class="type">Buffer.t</code>;</code></td>
+<code><span id="TYPEELTt.buffer">buffer</span>&nbsp;: <code class="type"><a href="PlaBuffer.html#TYPEdest">dest</a></code>;</code></td>
 
 </tr>
 <tr>
@@ -54,10 +73,15 @@ Text buffer use by Pla<br>
 </tr></table>
 }
 
+<div class="info ">
+Text buffer use by Pla<br>
+</div>
 
 
-<pre><span id="VALempty"><span class="keyword">val</span> empty</span> : <code class="type">unit -> <a href="PlaBuffer.html#TYPEt">t</a></code></pre>
+<pre><span id="VALnewBuffer"><span class="keyword">val</span> newBuffer</span> : <code class="type">unit -> <a href="PlaBuffer.html#TYPEt">t</a></code></pre>
+<pre><span id="VALnewFile"><span class="keyword">val</span> newFile</span> : <code class="type">string -> <a href="PlaBuffer.html#TYPEt">t</a></code></pre>
 <pre><span id="VALcontents"><span class="keyword">val</span> contents</span> : <code class="type"><a href="PlaBuffer.html#TYPEt">t</a> -> string</code></pre>
+<pre><span id="VALclose"><span class="keyword">val</span> close</span> : <code class="type"><a href="PlaBuffer.html#TYPEt">t</a> -> unit</code></pre>
 <pre><span id="VALnewline"><span class="keyword">val</span> newline</span> : <code class="type"><a href="PlaBuffer.html#TYPEt">t</a> -> unit</code></pre>
 <pre><span id="VALindent"><span class="keyword">val</span> indent</span> : <code class="type"><a href="PlaBuffer.html#TYPEt">t</a> -> unit</code></pre>
 <pre><span id="VALoutdent"><span class="keyword">val</span> outdent</span> : <code class="type"><a href="PlaBuffer.html#TYPEt">t</a> -> unit</code></pre>

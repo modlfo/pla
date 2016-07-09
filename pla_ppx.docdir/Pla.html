@@ -12,7 +12,8 @@
 <link title="Pla" rel="Chapter" href="Pla.html">
 <link title="PlaBuffer" rel="Chapter" href="PlaBuffer.html"><link title="Builtin templates" rel="Section" href="#6_Builtintemplates">
 <link title="Templates of basic types" rel="Section" href="#6_Templatesofbasictypes">
-<link title="Functions to combine templates" rel="Section" href="#6_Functionstocombinetemplates">
+<link title="Functions to wrap templates" rel="Section" href="#6_Functionstowraptemplates">
+<link title="Functions to append templates" rel="Section" href="#6_Functionstoappendtemplates">
 <link title="Printing of templates" rel="Section" href="#6_Printingoftemplates">
 <title>Pla</title>
 </head>
@@ -72,8 +73,30 @@ Template for a white space ' '<br>
 <pre><span id="VALfloat"><span class="keyword">val</span> float</span> : <code class="type">float -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
 <code class="code">float f</code> makes a template from a float value<br>
 </div>
+
+<pre><span id="VALstring_quoted"><span class="keyword">val</span> string_quoted</span> : <code class="type">string -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">string_quoted str</code> makes a template from a string <code class="code">str</code> but the contents are quoted<br>
+</div>
 <br>
-<h6 id="6_Functionstocombinetemplates">Functions to combine templates</h6><br>
+<h6 id="6_Functionstowraptemplates">Functions to wrap templates</h6><br>
+
+<pre><span id="VALwrap"><span class="keyword">val</span> wrap</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">wrap left right t</code> makes new template wrapped by the <code class="code">left</code> and <code class="code">right</code> templates<br>
+</div>
+
+<pre><span id="VALquote"><span class="keyword">val</span> quote</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">quote t</code> makes a new template wrapped with double quotes<br>
+</div>
+
+<pre><span id="VALparenthesize"><span class="keyword">val</span> parenthesize</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">parenthesize t</code> makes a new template wrapped by parenthesis<br>
+</div>
+
+<pre><span id="VALindent"><span class="keyword">val</span> indent</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">indent t</code> makes an indented block with the contents of the template <code class="code">t</code><br>
+</div>
+<br>
+<h6 id="6_Functionstoappendtemplates">Functions to append templates</h6><br>
 
 <pre><span id="VALappend"><span class="keyword">val</span> append</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
 <code class="code">append t1 t2</code> makes a new template with the contents of <code class="code">t1</code> followed by the contents of <code class="code">t2</code><br>
@@ -87,6 +110,14 @@ Template for a white space ' '<br>
 <code class="code">join elems</code> makes a new template by appending the list <code class="code">elems</code> of templates<br>
 </div>
 
+<pre><span id="VALjoin_sep"><span class="keyword">val</span> join_sep</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">join sep elems</code> makes a new template by appending the list <code class="code">elems</code> of templates separated by <code class="code">sep</code><br>
+</div>
+
+<pre><span id="VALjoin_sep_all"><span class="keyword">val</span> join_sep_all</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">join_sep_all sep elems</code> similar to <code class="code">join_sep sep elems</code> but also adds the separator after the last element<br>
+</div>
+
 <pre><span id="VALmap_join"><span class="keyword">val</span> map_join</span> : <code class="type">('a -> <a href="Pla.html#TYPEt">t</a>) -> 'a list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
 <code class="code">map_join f elems</code> makes a new template by applying the function <code class="code">f</code> to the list <code class="code">elems</code> and appending them<br>
 </div>
@@ -98,18 +129,14 @@ Template for a white space ' '<br>
 <pre><span id="VALmap_sep_all"><span class="keyword">val</span> map_sep_all</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> ('a -> <a href="Pla.html#TYPEt">t</a>) -> 'a list -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
 <code class="code">map_sep_all sep f elems</code> similar to <code class="code">map_sep sep f elems</code> but also adds the separator after the last element<br>
 </div>
-
-<pre><span id="VALindent"><span class="keyword">val</span> indent</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
-<code class="code">indent t</code> makes an indented block with the contents of the template <code class="code">t</code><br>
-</div>
-
-<pre><span id="VALwrap"><span class="keyword">val</span> wrap</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a> -> <a href="Pla.html#TYPEt">t</a></code></pre><div class="info ">
-<code class="code">wrap left right t</code> makes new template wrapped by the <code class="code">left</code> and <code class="code">right</code> templates<br>
-</div>
 <br>
 <h6 id="6_Printingoftemplates">Printing of templates</h6><br>
 
 <pre><span id="VALprint"><span class="keyword">val</span> print</span> : <code class="type"><a href="Pla.html#TYPEt">t</a> -> string</code></pre><div class="info ">
 <code class="code">print t</code> returns the contents template <code class="code">t</code> as a string<br>
+</div>
+
+<pre><span id="VALwrite"><span class="keyword">val</span> write</span> : <code class="type">string -> <a href="Pla.html#TYPEt">t</a> -> unit</code></pre><div class="info ">
+<code class="code">write file t</code> writes the contents of template <code class="code">t</code> to file <code class="code">file</code><br>
 </div>
 </body></html>

@@ -28,7 +28,11 @@
 <code class="code">append t1 t2</code> makes a new template with the contents of <code class="code">t1</code> followed by the contents of <code class="code">t2</code>
 </div>
 </td></tr>
+<tr><td><a href="PlaBuffer.html#VALappendToBuff">appendToBuff</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>C</td></tr>
+<tr><td><a href="PlaBuffer.html#VALclose">close</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
+<td></td></tr>
 <tr><td><a href="Pla.html#VALcomma">comma</a> [<a href="Pla.html">Pla</a>]</td>
 <td><div class="info">
 Template for a comma ','
@@ -40,9 +44,6 @@ Template for a comma followed by a space ', '
 </div>
 </td></tr>
 <tr><td><a href="PlaBuffer.html#VALcontents">contents</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
-<td></td></tr>
-<tr><td align="left"><br>E</td></tr>
-<tr><td><a href="PlaBuffer.html#VALempty">empty</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>F</td></tr>
 <tr><td><a href="Pla.html#VALfloat">float</a> [<a href="Pla.html">Pla</a>]</td>
@@ -69,6 +70,16 @@ Template for a comma followed by a space ', '
 <code class="code">join elems</code> makes a new template by appending the list <code class="code">elems</code> of templates
 </div>
 </td></tr>
+<tr><td><a href="Pla.html#VALjoin_sep">join_sep</a> [<a href="Pla.html">Pla</a>]</td>
+<td><div class="info">
+<code class="code">join sep elems</code> makes a new template by appending the list <code class="code">elems</code> of templates separated by <code class="code">sep</code>
+</div>
+</td></tr>
+<tr><td><a href="Pla.html#VALjoin_sep_all">join_sep_all</a> [<a href="Pla.html">Pla</a>]</td>
+<td><div class="info">
+<code class="code">join_sep_all sep elems</code> similar to <code class="code">join_sep sep elems</code> but also adds the separator after the last element
+</div>
+</td></tr>
 <tr><td align="left"><br>M</td></tr>
 <tr><td><a href="Pla.html#VALmap_join">map_join</a> [<a href="Pla.html">Pla</a>]</td>
 <td><div class="info">
@@ -86,6 +97,10 @@ Template for a comma followed by a space ', '
 </div>
 </td></tr>
 <tr><td align="left"><br>N</td></tr>
+<tr><td><a href="PlaBuffer.html#VALnewBuffer">newBuffer</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
+<td></td></tr>
+<tr><td><a href="PlaBuffer.html#VALnewFile">newFile</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
+<td></td></tr>
 <tr><td><a href="PlaBuffer.html#VALnewline">newline</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
 <td></td></tr>
 <tr><td><a href="Pla.html#VALnewline">newline</a> [<a href="Pla.html">Pla</a>]</td>
@@ -97,9 +112,20 @@ Template for a new line
 <tr><td><a href="PlaBuffer.html#VALoutdent">outdent</a> [<a href="PlaBuffer.html">PlaBuffer</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>P</td></tr>
+<tr><td><a href="Pla.html#VALparenthesize">parenthesize</a> [<a href="Pla.html">Pla</a>]</td>
+<td><div class="info">
+<code class="code">parenthesize t</code> makes a new template wrapped by parenthesis
+</div>
+</td></tr>
 <tr><td><a href="Pla.html#VALprint">print</a> [<a href="Pla.html">Pla</a>]</td>
 <td><div class="info">
 <code class="code">print t</code> returns the contents template <code class="code">t</code> as a string
+</div>
+</td></tr>
+<tr><td align="left"><br>Q</td></tr>
+<tr><td><a href="Pla.html#VALquote">quote</a> [<a href="Pla.html">Pla</a>]</td>
+<td><div class="info">
+<code class="code">quote t</code> makes a new template wrapped with double quotes
 </div>
 </td></tr>
 <tr><td align="left"><br>S</td></tr>
@@ -118,6 +144,11 @@ Template for a white space ' '
 <code class="code">string str</code> makes a template from a string <code class="code">str</code>
 </div>
 </td></tr>
+<tr><td><a href="Pla.html#VALstring_quoted">string_quoted</a> [<a href="Pla.html">Pla</a>]</td>
+<td><div class="info">
+<code class="code">string_quoted str</code> makes a template from a string <code class="code">str</code> but the contents are quoted
+</div>
+</td></tr>
 <tr><td align="left"><br>U</td></tr>
 <tr><td><a href="Pla.html#VALunit">unit</a> [<a href="Pla.html">Pla</a>]</td>
 <td><div class="info">
@@ -128,6 +159,11 @@ Empty template
 <tr><td><a href="Pla.html#VALwrap">wrap</a> [<a href="Pla.html">Pla</a>]</td>
 <td><div class="info">
 <code class="code">wrap left right t</code> makes new template wrapped by the <code class="code">left</code> and <code class="code">right</code> templates
+</div>
+</td></tr>
+<tr><td><a href="Pla.html#VALwrite">write</a> [<a href="Pla.html">Pla</a>]</td>
+<td><div class="info">
+<code class="code">write file t</code> writes the contents of template <code class="code">t</code> to file <code class="code">file</code>
 </div>
 </td></tr>
 </table>
