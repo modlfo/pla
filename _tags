@@ -26,6 +26,4 @@ true: annot, bin_annot
 <ppx/*.ml{,i,y}>: use_pla
 <ppx/*.ml{,i,y}>: use_ppx
 # OASIS_STOP
-true : cppo_V_OCAML
 <lib> : include
-<test/*.ml> : package(pla.ppx)

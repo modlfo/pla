@@ -783,7 +783,6 @@ let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 let () =
   Ocamlbuild_plugin.dispatch
     (fun hook ->
-      Ocamlbuild_cppo.dispatcher hook ;
       mark_tag_used "use_pla";
       mark_tag_used "use_ppx";
     )

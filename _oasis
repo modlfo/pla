@@ -12,7 +12,6 @@ Homepage: https://github.com/modlfo/pla
 
 OCamlVersion: >= 4.02
 AlphaFeatures: ocamlbuild_more_args
-XOCamlbuildPluginTags: package(cppo_ocamlbuild)
 
 Library "pla"
   Path: lib

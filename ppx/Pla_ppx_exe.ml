@@ -62,13 +62,9 @@ let template_type (t:Pla_tokens.vartype) =
    | Pla_tokens.String   -> Typ.constr (makeLident "string") []
    | Pla_tokens.Template -> Typ.constr (makeLident "Pla.t") []
 
-#if OCAML_VERSION < (4, 03, 0)
-let no_label = ""
-let constString s = Const_string(s,None)
-#else
+
 let no_label = Nolabel
 let constString s = Const.string s
-#endif
 
 let makeExp (loc:Location.t) (displacement:int) (s:Pla_tokens.s) : expression =
    match s with
@@ -103,11 +99,7 @@ let pla_mapper argv =
         match expr with
         | {
             pexp_desc =
-           #if OCAML_VERSION < (4, 03, 0)
-              Pexp_constant (Const_string (text, Some "pla"))
-           #else
               Pexp_constant (Pconst_string (text, Some "pla"))
-           #endif
            ; pexp_loc = loc;
           } ->
             let tokens = PlaLex.tokenize text in
@@ -116,13 +108,8 @@ let pla_mapper argv =
             pla_exp
 
         | { pexp_desc =
-          #if OCAML_VERSION < (4, 03, 0)
-            Pexp_extension
-              ({txt = "pla"},PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Const_string(text, _)) ; pexp_loc = loc }, _ ) }])
-          #else
             Pexp_extension
               ({txt = "pla"},PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Pconst_string (text, _)) ; pexp_loc = loc }, _) }])
-          #endif
           } ->
             let tokens = PlaLex.tokenize text in
             let displacement = 2 in
