@@ -136,10 +136,8 @@ $ make install
 
 #### Libraries
 
-- cppo
-- ocamlfind
-- ocamlbuild
-
+- ocaml-migrate-parsetree
+- jbuild
 
 ## Syntax for Pla Templates
 
