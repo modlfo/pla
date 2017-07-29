@@ -8,12 +8,11 @@ bug-reports: "https://github.com/modlfo/pla/issues"
 license: "MIT"
 dev-repo: "https://github.com/modlfo/pla.git"
 
-build: [
-  ["jbuilder" "build"]
-]
-install: [
-   ["jbuilder" "install"]
-]
+build: [["jbuilder" "build"]]
+
+install: [["jbuilder" "install"]]
+
+remove: [["jbuilder" "uninstall"]]
 
 depends: [
   "jbuilder" {build}
