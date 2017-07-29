@@ -111,7 +111,7 @@ module Pla = struct
               let tokens = PlaLex.tokenize text in
               let displacement = 5 in
               let pla_exp = makeTemplateExp loc displacement tokens in
-              migrate.Versions.copy_expression pla_exp
+              pla_exp
 
            | { pexp_desc =
                   Pexp_extension
@@ -120,9 +120,9 @@ module Pla = struct
               let tokens = PlaLex.tokenize text in
               let displacement = 2 in
               let pla_exp = makeTemplateExp loc displacement tokens in
-              migrate.Versions.copy_expression pla_exp
+              pla_exp
 
-           | x -> default_mapper.expr mapper x;
+           | _ -> default_mapper.expr mapper expr;
       }
 
 end
