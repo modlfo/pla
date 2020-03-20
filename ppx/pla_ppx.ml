@@ -30,7 +30,7 @@ module Pla = struct
    open Parsetree
    open Ast_helper
 
-   let readFile loc path =
+   let readFile _ path =
       if Sys.file_exists path then
          let file = open_in path in
          let buffer = Buffer.create 16 in
@@ -122,7 +122,7 @@ module Pla = struct
       { default_mapper with
         expr = fun mapper expr ->
            match expr with
-           | { pexp_desc = Pexp_constant (Pconst_string (text, Some "pla")); pexp_loc = loc } ->
+           | { pexp_desc = Pexp_constant (Pconst_string (text, Some "pla")); pexp_loc = loc; _ } ->
               let tokens = PlaLex.tokenize text in
               let displacement = 5 in
               let pla_exp = makeTemplateExp loc displacement tokens in
@@ -130,7 +130,7 @@ module Pla = struct
 
            | { pexp_desc =
                   Pexp_extension
-                     ({txt = "pla"}, PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Pconst_string (text, _)) ; pexp_loc = loc }, _) }]) } ->
+                     ({txt = "pla"; _ }, PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Pconst_string (text, _)) ; pexp_loc = loc; _ }, _); _ }]); _ } ->
               let tokens = PlaLex.tokenize text in
               let displacement = 2 in
               let pla_exp = makeTemplateExp loc displacement tokens in
@@ -138,7 +138,7 @@ module Pla = struct
 
            (* Files as templates *)
 
-           | { pexp_desc = Pexp_constant (Pconst_string (path, Some "pla_file")); pexp_loc = loc } ->
+           | { pexp_desc = Pexp_constant (Pconst_string (path, Some "pla_file")); pexp_loc = loc; _ } ->
               let text = readFile loc path in
               let tokens = PlaLex.tokenize text in
               let displacement = 5 in
@@ -147,7 +147,7 @@ module Pla = struct
 
            | { pexp_desc =
                   Pexp_extension
-                     ({txt = "pla_file"}, PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Pconst_string (path, _)) ; pexp_loc = loc }, _) }]) } ->
+                     ({txt = "pla_file"; _ }, PStr [{pstr_desc = Pstr_eval({pexp_desc = Pexp_constant(Pconst_string (path, _)) ; pexp_loc = loc; _ }, _); _ }]); _ } ->
               let text = readFile loc path in
               let tokens = PlaLex.tokenize text in
               let displacement = 2 in

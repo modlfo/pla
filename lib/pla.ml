@@ -94,7 +94,7 @@ type t = buffer -> unit
 
 (* Builtin templates *)
 
-let unit : t = fun buffer -> ()
+let unit : t = fun _ -> ()
 
 let newline : t = fun buffer -> PlaBuffer.newline buffer
 
@@ -113,9 +113,9 @@ let string (s:string) : t =
 
 let string_quoted (s:string) : t =
    fun buffer ->
-      PlaBuffer.append buffer "\"";
-      PlaBuffer.append buffer s;
-      PlaBuffer.append buffer "\""
+   PlaBuffer.append buffer "\"";
+   PlaBuffer.append buffer s;
+   PlaBuffer.append buffer "\""
 
 let int (i:int) : t =
    fun buffer -> PlaBuffer.append buffer (string_of_int i)
@@ -127,48 +127,48 @@ let float (f:float) : t =
 
 let quote (t:t) : t =
    fun buffer ->
-      PlaBuffer.append buffer "\"";
-      t buffer;
-      PlaBuffer.append buffer "\""
+   PlaBuffer.append buffer "\"";
+   t buffer;
+   PlaBuffer.append buffer "\""
 
 let parenthesize (t:t) : t =
    fun buffer ->
-      PlaBuffer.append buffer "(";
-      t buffer;
-      PlaBuffer.append buffer ")"
+   PlaBuffer.append buffer "(";
+   t buffer;
+   PlaBuffer.append buffer ")"
 
 let indent (t:t) : t =
    fun buffer ->
-      PlaBuffer.indent buffer;
-      t buffer;
-      PlaBuffer.outdent buffer
+   PlaBuffer.indent buffer;
+   t buffer;
+   PlaBuffer.outdent buffer
 
 let wrap (l:t) (r:t) (t:t) : t =
    fun buffer ->
-      l buffer;
-      t buffer;
-      r buffer
+   l buffer;
+   t buffer;
+   r buffer
 
 (* Functions to append templates *)
 
 let append (t1:t) (t2:t) : t =
    fun buffer ->
-      t1 buffer;
-      t2 buffer
+   t1 buffer;
+   t2 buffer
 
 let join (elems:t list) : t =
    fun buffer -> List.iter (fun a -> a buffer) elems
 
 let join_sep (sep:t) (elems:'a list) : t =
    fun buffer ->
-      let rec loop = function
-         | []   -> ()
-         | [h]  -> h buffer
-         | h::t ->
-            h buffer;
-            sep buffer;
-            loop t
-      in loop elems
+   let rec loop = function
+      | []   -> ()
+      | [h]  -> h buffer
+      | h::t ->
+         h buffer;
+         sep buffer;
+         loop t
+   in loop elems
 
 let join_sep_all (sep:t) (elems:'a list) : t =
    fun buffer -> List.iter (fun h -> h buffer; sep buffer) elems
@@ -178,14 +178,14 @@ let map_join (f:'a -> t) (elems:'a list) : t =
 
 let map_sep (sep:t) (f:'a -> t) (elems:'a list) : t =
    fun buffer ->
-      let rec loop = function
-         | []   -> ()
-         | [h]  -> (f h) buffer
-         | h::t ->
-            (f h) buffer;
-            sep buffer;
-            loop t
-      in loop elems
+   let rec loop = function
+      | []   -> ()
+      | [h]  -> (f h) buffer
+      | h::t ->
+         (f h) buffer;
+         sep buffer;
+         loop t
+   in loop elems
 
 let map_sep_all (sep:t) (f:'a -> t) (elems:'a list) : t =
    fun buffer -> List.iter (fun h -> (f h) buffer; sep buffer) elems

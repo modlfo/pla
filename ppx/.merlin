@@ -1,5 +1,0 @@
-B ../_build/default/ppx
-FLG -open Pla_ppx__ -w -40
-PKG compiler-libs
-PKG compiler-libs.common
-PKG ocaml-migrate-parsetree
