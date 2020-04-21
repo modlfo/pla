@@ -19,15 +19,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (** Kinds of variables when tokenizing a template *)
 type vartype =
-   | Int
-   | Float
-   | String
-   | Template
+  | Int
+  | Float
+  | String
+  | Template
 
 (** Kinds of tokens of a template *)
 type s =
-   | N
-   | I
-   | O
-   | T of string
-   | V of string * vartype * Location.t
+  | N
+  | I
+  | O
+  | T of string
+  | V of string * vartype * Location.t

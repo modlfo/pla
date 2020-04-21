@@ -17,23 +17,12 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *)
 
-(** Main module *)
+type buffer
 
-module PlaBuffer :                                                                                                                                                                                 sig                                                                                                                                                                                                type dest = File of out_channel | Buffer of Buffer.t                                                                                                                                         
-   type t
-   val appendToBuff : dest -> string -> unit
-   val newBuffer : unit -> t
-   val newFile : string -> t
-   val contents : t -> string
-   val close : t -> unit
-   val newline : t -> unit
-   val indent : t -> unit
-   val outdent : t -> unit
-   val append : t -> string -> unit
-end
-
-type t = PlaBuffer.t -> unit
+type t
 (** Main template type *)
+
+val make : (buffer -> unit) -> t
 
 (** {6 Builtin templates} *)
 
@@ -55,7 +44,6 @@ val semi : t
 val space : t
 (** Template for a white space ' ' *)
 
-
 (** {6 Templates of basic types} *)
 
 val string : string -> t
@@ -67,9 +55,11 @@ val int : int -> t
 val float : float -> t
 (** [float f] makes a template from a float value *)
 
+val bool : bool -> t
+(** [bool b] makes a template from a bool value that produces 'true' or 'false' *)
+
 val string_quoted : string -> t
 (** [string_quoted str] makes a template from a string [str] but the contents are quoted *)
-
 
 (** {6 Functions to wrap templates} *)
 
@@ -85,13 +75,12 @@ val parenthesize : t -> t
 val indent : t -> t
 (** [indent t] makes an indented block with the contents of the template [t] *)
 
-
 (** {6 Functions to append templates} *)
 
 val append : t -> t -> t
 (** [append t1 t2] makes a new template with the contents of [t1] followed by the contents of [t2] *)
 
-val (++) : t -> t -> t
+val ( ++ ) : t -> t -> t
 (** [t1 ++ t2] equivalent to [append t1 t2] *)
 
 val join : t list -> t
@@ -112,7 +101,6 @@ val map_sep : t -> ('a -> t) -> 'a list -> t
 val map_sep_all : t -> ('a -> t) -> 'a list -> t
 (** [map_sep_all sep f elems] similar to [map_sep sep f elems] but also adds the separator after the last element *)
 
-
 (** {6 Printing of templates} *)
 
 val print : t -> string
@@ -120,3 +108,13 @@ val print : t -> string
 
 val write : string -> t -> unit
 (** [write file t] writes the contents of template [t] to file [file] *)
+
+val buffer_newline : buffer -> unit
+
+val buffer_indent : buffer -> unit
+
+val buffer_outdent : buffer -> unit
+
+val buffer_append : buffer -> string -> unit
+
+val buffer_apply : t -> buffer -> unit

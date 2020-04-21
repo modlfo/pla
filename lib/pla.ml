@@ -17,189 +17,207 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *)
 
-module PlaBuffer = struct
-   type dest =
-      | File   of out_channel
-      | Buffer of Buffer.t
-
-
-   let appendToBuff (d:dest) (s:string) : unit =
-      match d with
-      | File(c)   -> output_string c s
-      | Buffer(b) -> Buffer.add_string b s
-
-
-   (** Text buffer use by Pla *)
-   type t =
-      {
-         buffer           : dest;
-         mutable indent   : int;
-         mutable space    : string;
-         mutable indented : bool;
-      }
-
-   let newBuffer () =
-      {
-         buffer   = Buffer(Buffer.create 128);
-         indent   = 0;
-         space    = "";
-         indented = false;
-      }
-
-   let newFile (file:string) =
-      {
-         buffer   = File(open_out file);
-         indent   = 0;
-         space    = "";
-         indented = false;
-      }
-
-   let contents (t:t) : string =
-      match t.buffer with
-      | Buffer(b) -> Buffer.contents b
-      | File _ -> ""
-
-   let close (t:t) : unit =
-      match t.buffer with
-      | Buffer _ -> ()
-      | File(c) -> close_out c
-
-   let newline (t:t) =
-      appendToBuff t.buffer "\n";
-      t.indented <- false
-
-   let indent (t:t) : unit =
-      t.indent <- t.indent +1;
-      t.space  <- String.make (t.indent * 3) ' ';
-      newline t
-
-   let outdent (t:t) : unit =
-      t.indent <- t.indent - 1;
-      if t.indent < 0 then
-         failwith "Cannot outdent more";
-      t.space <- String.make (t.indent * 3) ' '
-
-   let append (t:t) (s:string) : unit =
-      if not t.indented then begin
-         appendToBuff t.buffer t.space;
-         t.indented <- true;
-      end;
-      appendToBuff t.buffer s
-
-end
-
-type buffer = PlaBuffer.t
+type buffer =
+  { append : string -> unit
+  ; content : unit -> string
+  ; close : unit -> unit
+  ; mutable indent : int
+  ; mutable space : string
+  ; mutable indented : bool
+  }
 
 type t = buffer -> unit
+
+let buffer_new () =
+  let b = Buffer.create 128 in
+  { append = (fun s -> Buffer.add_string b s)
+  ; content = (fun () -> Buffer.contents b)
+  ; close = (fun () -> Buffer.clear b)
+  ; indent = 0
+  ; space = ""
+  ; indented = false
+  }
+
+
+let buffer_new_file (file : string) =
+  let c = open_out file in
+  { append = (fun s -> output_string c s)
+  ; content = (fun () -> "")
+  ; close = (fun () -> close_out c)
+  ; indent = 0
+  ; space = ""
+  ; indented = false
+  }
+
+
+let buffer_contents t : string = t.content ()
+
+let buffer_close t : unit = t.close ()
+
+let buffer_newline t =
+  t.append "\n" ;
+  t.indented <- false
+  [@@inline always]
+
+
+let buffer_indent t : unit =
+  t.indent <- t.indent + 1 ;
+  t.space <- String.make (t.indent * 3) ' ' ;
+  buffer_newline t
+  [@@inline always]
+
+
+let buffer_outdent t : unit =
+  t.indent <- t.indent - 1 ;
+  if t.indent < 0 then
+    failwith "Cannot outdent more" ;
+  t.space <- String.make (t.indent * 3) ' '
+  [@@inline always]
+
+
+let buffer_append t (s : string) : unit =
+  if not t.indented then begin
+    t.append t.space ;
+    t.indented <- true
+  end ;
+  t.append s
+  [@@inline always]
+
+
+let buffer_apply (t : t) (buffer : buffer) : unit = t buffer [@@inline always]
+
+let make (f : buffer -> unit) : t = f [@@inline always]
 
 (* Builtin templates *)
 
 let unit : t = fun _ -> ()
 
-let newline : t = fun buffer -> PlaBuffer.newline buffer
+let newline : t = fun buffer -> buffer_newline buffer
 
-let comma : t = fun buffer -> PlaBuffer.append buffer ","
+let comma : t = fun buffer -> buffer_append buffer ","
 
-let commaspace : t = fun buffer -> PlaBuffer.append buffer ", "
+let commaspace : t = fun buffer -> buffer_append buffer ", "
 
-let semi : t = fun buffer -> PlaBuffer.append buffer ";"
+let semi : t = fun buffer -> buffer_append buffer ";"
 
-let space : t = fun buffer -> PlaBuffer.append buffer " "
+let space : t = fun buffer -> buffer_append buffer " "
 
 (* Templates of basic types *)
 
-let string (s:string) : t =
-   fun buffer -> PlaBuffer.append buffer s
+let string (s : string) : t = fun buffer -> buffer_append buffer s
 
-let string_quoted (s:string) : t =
-   fun buffer ->
-   PlaBuffer.append buffer "\"";
-   PlaBuffer.append buffer s;
-   PlaBuffer.append buffer "\""
+let string_quoted (s : string) : t =
+ fun buffer ->
+  buffer_append buffer "\"" ;
+  buffer_append buffer s ;
+  buffer_append buffer "\""
 
-let int (i:int) : t =
-   fun buffer -> PlaBuffer.append buffer (string_of_int i)
 
-let float (f:float) : t =
-   fun buffer -> PlaBuffer.append buffer (string_of_float f)
+let int (i : int) : t = fun buffer -> buffer_append buffer (string_of_int i)
+
+let float (f : float) : t = fun buffer -> buffer_append buffer (string_of_float f)
+
+let bool (b : bool) : t =
+ fun buffer ->
+  let s = if b then "true" else "false" in
+  buffer_append buffer s
+
 
 (* Functions to wrap templates *)
 
-let quote (t:t) : t =
-   fun buffer ->
-   PlaBuffer.append buffer "\"";
-   t buffer;
-   PlaBuffer.append buffer "\""
+let quote (t : t) : t =
+ fun buffer ->
+  buffer_append buffer "\"" ;
+  t buffer ;
+  buffer_append buffer "\""
 
-let parenthesize (t:t) : t =
-   fun buffer ->
-   PlaBuffer.append buffer "(";
-   t buffer;
-   PlaBuffer.append buffer ")"
 
-let indent (t:t) : t =
-   fun buffer ->
-   PlaBuffer.indent buffer;
-   t buffer;
-   PlaBuffer.outdent buffer
+let parenthesize (t : t) : t =
+ fun buffer ->
+  buffer_append buffer "(" ;
+  t buffer ;
+  buffer_append buffer ")"
 
-let wrap (l:t) (r:t) (t:t) : t =
-   fun buffer ->
-   l buffer;
-   t buffer;
-   r buffer
+
+let indent (t : t) : t =
+ fun buffer ->
+  buffer_indent buffer ;
+  t buffer ;
+  buffer_outdent buffer
+
+
+let wrap (l : t) (r : t) (t : t) : t =
+ fun buffer ->
+  l buffer ;
+  t buffer ;
+  r buffer
+
 
 (* Functions to append templates *)
 
-let append (t1:t) (t2:t) : t =
-   fun buffer ->
-   t1 buffer;
-   t2 buffer
+let append (t1 : t) (t2 : t) : t =
+ fun buffer ->
+  t1 buffer ;
+  t2 buffer
 
-let join (elems:t list) : t =
-   fun buffer -> List.iter (fun a -> a buffer) elems
 
-let join_sep (sep:t) (elems:'a list) : t =
-   fun buffer ->
-   let rec loop = function
-      | []   -> ()
-      | [h]  -> h buffer
-      | h::t ->
-         h buffer;
-         sep buffer;
-         loop t
-   in loop elems
+let join (elems : t list) : t = fun buffer -> List.iter (fun a -> a buffer) elems
 
-let join_sep_all (sep:t) (elems:'a list) : t =
-   fun buffer -> List.iter (fun h -> h buffer; sep buffer) elems
+let join_sep (sep : t) (elems : 'a list) : t =
+ fun buffer ->
+  let rec loop = function
+    | [] -> ()
+    | [ h ] -> h buffer
+    | h :: t ->
+        h buffer ;
+        sep buffer ;
+        loop t
+  in
+  loop elems
 
-let map_join (f:'a -> t) (elems:'a list) : t =
-   fun buffer -> List.iter (fun a -> f a buffer) elems
 
-let map_sep (sep:t) (f:'a -> t) (elems:'a list) : t =
-   fun buffer ->
-   let rec loop = function
-      | []   -> ()
-      | [h]  -> (f h) buffer
-      | h::t ->
-         (f h) buffer;
-         sep buffer;
-         loop t
-   in loop elems
+let join_sep_all (sep : t) (elems : 'a list) : t =
+ fun buffer ->
+  List.iter
+    (fun h ->
+      h buffer ;
+      sep buffer)
+    elems
 
-let map_sep_all (sep:t) (f:'a -> t) (elems:'a list) : t =
-   fun buffer -> List.iter (fun h -> (f h) buffer; sep buffer) elems
 
-let (++) (t1:t) (t2:t) : t =
-   append t1 t2
+let map_join (f : 'a -> t) (elems : 'a list) : t = fun buffer -> List.iter (fun a -> f a buffer) elems
 
-let print (t:t) : string =
-   let buffer = PlaBuffer.newBuffer () in
-   t buffer;
-   PlaBuffer.contents buffer
+let map_sep (sep : t) (f : 'a -> t) (elems : 'a list) : t =
+ fun buffer ->
+  let rec loop = function
+    | [] -> ()
+    | [ h ] -> (f h) buffer
+    | h :: t ->
+        (f h) buffer ;
+        sep buffer ;
+        loop t
+  in
+  loop elems
 
-let write (file:string) (t:t) : unit =
-   let buffer = PlaBuffer.newFile file in
-   t buffer;
-   PlaBuffer.close buffer
 
+let map_sep_all (sep : t) (f : 'a -> t) (elems : 'a list) : t =
+ fun buffer ->
+  List.iter
+    (fun h ->
+      (f h) buffer ;
+      sep buffer)
+    elems
+
+
+let ( ++ ) (t1 : t) (t2 : t) : t = append t1 t2
+
+let print (t : t) : string =
+  let buffer = buffer_new () in
+  t buffer ;
+  buffer_contents buffer
+
+
+let write (file : string) (t : t) : unit =
+  let buffer = buffer_new_file file in
+  t buffer ;
+  buffer_close buffer
