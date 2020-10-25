@@ -19,8 +19,8 @@
 
 type buffer
 
-type t
 (** Main template type *)
+type t
 
 val make : (buffer -> unit) -> t
 
@@ -118,3 +118,17 @@ val buffer_outdent : buffer -> unit
 val buffer_append : buffer -> string -> unit
 
 val buffer_apply : t -> buffer -> unit
+
+type compiled
+
+val create : string -> compiled
+
+val set : string -> t -> compiled -> compiled
+
+val seti : string -> int -> compiled -> compiled
+
+val setf : string -> float -> compiled -> compiled
+
+val sets : string -> string -> compiled -> compiled
+
+val close : compiled -> t

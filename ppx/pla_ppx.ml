@@ -19,6 +19,8 @@
 
 open Migrate_parsetree
 open Ast_406
+module Pla_tokens = Pla__.Pla_tokens
+module Pla_lex = Pla__.Pla_lex
 
 let ocaml_version = Versions.ocaml_406
 
@@ -140,7 +142,7 @@ module Pla = struct
         (fun mapper expr ->
           match expr with
           | { pexp_desc = Pexp_constant (Pconst_string (text, Some "pla")); pexp_loc = loc; _ } ->
-              let tokens = PlaLex.tokenize text in
+              let tokens = Pla_lex.tokenize text in
               let displacement = 5 in
               let pla_exp = makeTemplateExp loc displacement tokens in
               pla_exp
@@ -155,14 +157,14 @@ module Pla = struct
                       ] )
             ; _
             } ->
-              let tokens = PlaLex.tokenize text in
+              let tokens = Pla_lex.tokenize text in
               let displacement = 2 in
               let pla_exp = makeTemplateExp loc displacement tokens in
               pla_exp
           (* Files as templates *)
           | { pexp_desc = Pexp_constant (Pconst_string (path, Some "pla_file")); pexp_loc = loc; _ } ->
               let text = readFile loc path in
-              let tokens = PlaLex.tokenize text in
+              let tokens = Pla_lex.tokenize text in
               let displacement = 5 in
               let pla_exp = makeTemplateExp loc displacement tokens in
               pla_exp
@@ -178,7 +180,7 @@ module Pla = struct
             ; _
             } ->
               let text = readFile loc path in
-              let tokens = PlaLex.tokenize text in
+              let tokens = Pla_lex.tokenize text in
               let displacement = 2 in
               let pla_exp = makeTemplateExp loc displacement tokens in
               pla_exp

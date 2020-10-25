@@ -115,7 +115,13 @@ let string_quoted (s : string) : t =
 
 let int (i : int) : t = fun buffer -> buffer_append buffer (string_of_int i)
 
-let float (f : float) : t = fun buffer -> buffer_append buffer (string_of_float f)
+let float (f : float) : t =
+ fun buffer ->
+  let s = string_of_float f in
+  buffer_append buffer s ;
+  if s.[String.length s - 1] = '.' then
+    buffer_append buffer "0"
+
 
 let bool (b : bool) : t =
  fun buffer ->
@@ -221,3 +227,81 @@ let write (file : string) (t : t) : unit =
   let buffer = buffer_new_file file in
   t buffer ;
   buffer_close buffer
+
+
+type compiled =
+  { tokens : Pla_tokens.s list
+  ; slots : (string * Pla_tokens.vartype) list
+  ; filled : (string * t) list
+  }
+
+module StringMap = Map.Make (String)
+
+let collectSlots tokens =
+  let rec loop acc t =
+    match t with
+    | Pla_tokens.V (name, type_, _) :: t -> loop (StringMap.add name type_ acc) t
+    | _ :: t -> loop acc t
+    | [] -> acc
+  in
+  loop StringMap.empty tokens
+
+
+let create text =
+  let tokens = Pla_lex.tokenize text in
+  let slots = StringMap.fold (fun key value acc -> (key, value) :: acc) (collectSlots tokens) [] in
+  { tokens; slots; filled = [] }
+
+
+let set_generic name value type_ compiled =
+  let rec loop acc slots =
+    match slots with
+    | (var, found_type_) :: t when var = name ->
+        if type_ = found_type_ then
+          (var, value), acc @ t
+        else
+          failwith ("The type for template does not match: " ^ name)
+    | h :: t -> loop (h :: acc) t
+    | [] ->
+        let available = String.concat ", " (List.map (fun (s, _) -> s) compiled.slots) in
+        failwith ("The slot '" ^ name ^ "' could not be filled. " ^ available)
+  in
+  let filled1, slots = loop [] compiled.slots in
+  { compiled with filled = filled1 :: compiled.filled; slots }
+
+
+let set name value compiled = set_generic name value Pla_tokens.Template compiled
+
+let seti name value compiled = set_generic name (int value) Pla_tokens.Int compiled
+
+let setf name value compiled = set_generic name (float value) Pla_tokens.Float compiled
+
+let sets name value compiled = set_generic name (string value) Pla_tokens.String compiled
+
+let close compiled buffer =
+  if compiled.slots <> [] then
+    let available = String.concat ", " (List.map (fun (s, _) -> s) compiled.slots) in
+    failwith ("The template is not filled. " ^ available)
+  else
+    let open Pla_tokens in
+    let rec loop tokens =
+      match tokens with
+      | N :: t ->
+          buffer_newline buffer ;
+          loop t
+      | I :: t ->
+          buffer_indent buffer ;
+          loop t
+      | O :: t ->
+          buffer_outdent buffer ;
+          loop t
+      | T s :: t ->
+          buffer_append buffer s ;
+          loop t
+      | V (name, _, _) :: t ->
+          let temp = List.assoc name compiled.filled in
+          temp buffer ;
+          loop t
+      | [] -> ()
+    in
+    loop compiled.tokens
