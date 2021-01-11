@@ -17,19 +17,11 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *)
 
-open Migrate_parsetree
-open Ast_406
+open Ppxlib
 module Pla_tokens = Pla__.Pla_tokens
 module Pla_lex = Pla__.Pla_lex
 
-let ocaml_version = Versions.ocaml_406
-
-let migrate = Versions.migrate Versions.ocaml_current ocaml_version
-
-module Pla = struct
-  open Ast_mapper
-  open Asttypes
-  open Parsetree
+module PlaMapper = struct
   open Ast_helper
 
   let readFile _ path =
@@ -54,7 +46,7 @@ module Pla = struct
 
   let buffer_id = "__buffer__"
 
-  let makeLident (str : string) : Longident.t Location.loc = Longident.parse str |> Location.mknoloc
+  let makeLident (str : string) : Longident.t Location.loc = Longident.parse str |> Ocaml_common.Location.mknoloc
 
   let buffer = Exp.ident (makeLident buffer_id)
 
@@ -93,7 +85,7 @@ module Pla = struct
       }
 
 
-  let mkVar (var_loc : Location.t) (v : string) = Location.mkloc (Longident.parse v) var_loc
+  let mkVar (var_loc : Location.t) (v : string) = Ocaml_common.Location.mkloc (Longident.parse v) var_loc
 
   let template_type (t : Pla_tokens.vartype) =
     match t with
@@ -103,93 +95,86 @@ module Pla = struct
     | Pla_tokens.Template -> Typ.constr (makeLident "Pla.t") []
 
 
-  let no_label = Nolabel
-
   let constString s = Const.string s
 
-  let makeExp (loc : Location.t) (displacement : int) (s : Pla_tokens.s) : expression =
+  let makeExp (loc : Location.t) (displacement : int) (s : Pla_tokens.s) =
     match s with
-    | Pla_tokens.N -> Exp.apply ~loc newline [ no_label, buffer ]
-    | Pla_tokens.I -> Exp.apply ~loc indent [ no_label, buffer ]
-    | Pla_tokens.O -> Exp.apply ~loc outdent [ no_label, buffer ]
-    | Pla_tokens.T txt -> Exp.apply ~loc append [ no_label, buffer; no_label, Exp.constant (constString txt) ]
+    | Pla_tokens.N -> Exp.apply ~loc newline [ Nolabel, buffer ]
+    | Pla_tokens.I -> Exp.apply ~loc indent [ Nolabel, buffer ]
+    | Pla_tokens.O -> Exp.apply ~loc outdent [ Nolabel, buffer ]
+    | Pla_tokens.T txt -> Exp.apply ~loc append [ Nolabel, buffer; Nolabel, Exp.constant (constString txt) ]
     | Pla_tokens.V (v, vartype, loc_ref) ->
         let var_loc = offsetLocation displacement loc loc_ref in
         let v_exp = Exp.constraint_ ~loc:var_loc (Exp.ident ~loc:var_loc (mkVar var_loc v)) (template_type vartype) in
         ( match vartype with
-        | Pla_tokens.Template -> Exp.apply ~loc papply [ no_label, v_exp; no_label, buffer ]
-        | Pla_tokens.Int ->
-            Exp.apply ~loc papply [ no_label, Exp.apply ~loc pint [ no_label, v_exp ]; no_label, buffer ]
+        | Pla_tokens.Template -> Exp.apply ~loc papply [ Nolabel, v_exp; Nolabel, buffer ]
+        | Pla_tokens.Int -> Exp.apply ~loc papply [ Nolabel, Exp.apply ~loc pint [ Nolabel, v_exp ]; Nolabel, buffer ]
         | Pla_tokens.Float ->
-            Exp.apply ~loc papply [ no_label, Exp.apply ~loc pfloat [ no_label, v_exp ]; no_label, buffer ]
+            Exp.apply ~loc papply [ Nolabel, Exp.apply ~loc pfloat [ Nolabel, v_exp ]; Nolabel, buffer ]
         | Pla_tokens.String ->
-            Exp.apply ~loc papply [ no_label, Exp.apply ~loc pstring [ no_label, v_exp ]; no_label, buffer ] )
+            Exp.apply ~loc papply [ Nolabel, Exp.apply ~loc pstring [ Nolabel, v_exp ]; Nolabel, buffer ] )
 
 
-  let makeExpSeq (loc : Location.t) (displacement : int) (sl : Pla_tokens.s list) : expression =
+  let makeExpSeq (loc : Location.t) (displacement : int) (sl : Pla_tokens.s list) =
     List.fold_right (fun a s -> Exp.sequence (makeExp loc displacement a) s) sl unit
 
 
   let makeTemplateExp (loc : Location.t) (displacement : int) (sl : Pla_tokens.s list) : expression =
-    let pat = Pat.var (Location.mknoloc buffer_id) in
-    let fun_ = Exp.fun_ ~loc no_label None pat (makeExpSeq loc displacement sl) in
-    Exp.apply ~loc (Exp.ident (makeLident "Pla.make")) [ no_label, fun_ ]
+    let pat = Pat.var (Ocaml_common.Location.mknoloc buffer_id) in
+    let fun_ = Exp.fun_ ~loc Nolabel None pat (makeExpSeq loc displacement sl) in
+    Exp.apply ~loc (Exp.ident (makeLident "Pla.make")) [ Nolabel, fun_ ]
 
 
-  let mapper _config _cookies =
-    { default_mapper with
-      expr =
-        (fun mapper expr ->
-          match expr with
-          | { pexp_desc = Pexp_constant (Pconst_string (text, Some "pla")); pexp_loc = loc; _ } ->
-              let tokens = Pla_lex.tokenize text in
-              let displacement = 5 in
-              let pla_exp = makeTemplateExp loc displacement tokens in
-              pla_exp
-          | { pexp_desc =
-                Pexp_extension
-                  ( { txt = "pla"; _ }
-                  , PStr
-                      [ { pstr_desc =
-                            Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (text, _)); pexp_loc = loc; _ }, _)
-                        ; _
-                        }
-                      ] )
-            ; _
-            } ->
-              let tokens = Pla_lex.tokenize text in
-              let displacement = 2 in
-              let pla_exp = makeTemplateExp loc displacement tokens in
-              pla_exp
-          (* Files as templates *)
-          | { pexp_desc = Pexp_constant (Pconst_string (path, Some "pla_file")); pexp_loc = loc; _ } ->
-              let text = readFile loc path in
-              let tokens = Pla_lex.tokenize text in
-              let displacement = 5 in
-              let pla_exp = makeTemplateExp loc displacement tokens in
-              pla_exp
-          | { pexp_desc =
-                Pexp_extension
-                  ( { txt = "pla_file"; _ }
-                  , PStr
-                      [ { pstr_desc =
-                            Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (path, _)); pexp_loc = loc; _ }, _)
-                        ; _
-                        }
-                      ] )
-            ; _
-            } ->
-              let text = readFile loc path in
-              let tokens = Pla_lex.tokenize text in
-              let displacement = 2 in
-              let pla_exp = makeTemplateExp loc displacement tokens in
-              pla_exp
-          | _ -> default_mapper.expr mapper expr)
-    }
+  let mapper ~loc ~path (expr : expression) : expression =
+    let _ = loc in
+    let _ = path in
+    match expr with
+    | { pexp_desc = Pexp_constant (Pconst_string (text, Some "pla")); pexp_loc = loc; _ } ->
+        let tokens = Pla_lex.tokenize text in
+        let displacement = 5 in
+        let pla_exp = makeTemplateExp loc displacement tokens in
+        pla_exp
+    | { pexp_desc =
+          Pexp_extension
+            ( { txt = "pla"; _ }
+            , PStr
+                [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (text, _)); pexp_loc = loc; _ }, _)
+                  ; _
+                  }
+                ] )
+      ; _
+      } ->
+        let tokens = Pla_lex.tokenize text in
+        let displacement = 2 in
+        let pla_exp = makeTemplateExp loc displacement tokens in
+        pla_exp
+    (* Files as templates *)
+    | { pexp_desc = Pexp_constant (Pconst_string (path, Some "pla_file")); pexp_loc = loc; _ } ->
+        let text = readFile loc path in
+        let tokens = Pla_lex.tokenize text in
+        let displacement = 5 in
+        let pla_exp = makeTemplateExp loc displacement tokens in
+        pla_exp
+    | { pexp_desc =
+          Pexp_extension
+            ( { txt = "pla_file"; _ }
+            , PStr
+                [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (path, _)); pexp_loc = loc; _ }, _)
+                  ; _
+                  }
+                ] )
+      ; _
+      } ->
+        let text = readFile loc path in
+        let tokens = Pla_lex.tokenize text in
+        let displacement = 2 in
+        let pla_exp = makeTemplateExp loc displacement tokens in
+        pla_exp
+    | _ -> expr
 end
 
-let args_spec = []
+open Ppxlib
 
-let reset_args () = ()
+let _ =
+  Extension.declare "pla" Ppxlib.Extension.Context.Expression Ast_pattern.(single_expr_payload __) PlaMapper.mapper
 
-let () = Driver.register ~name:"pla" ~args:args_spec ~reset_args ocaml_version Pla.mapper
