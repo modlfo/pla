@@ -128,6 +128,7 @@ $ opam install pla
 
 #### Libraries
 
+- ocaml-compiler-libs
 - ppxlib
 - dune
 
