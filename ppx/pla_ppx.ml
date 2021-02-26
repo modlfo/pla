@@ -134,32 +134,7 @@ module PlaMapper = struct
         let displacement = 5 in
         let pla_exp = makeTemplateExp loc displacement tokens in
         pla_exp
-    | { pexp_desc =
-          Pexp_extension
-            ( { txt = "pla"; _ }
-            , PStr [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (text, loc, _)); _ }, _); _ } ]
-            )
-      ; _
-      } ->
-        let tokens = Pla_lex.tokenize text in
-        let displacement = 2 in
-        let pla_exp = makeTemplateExp loc displacement tokens in
-        pla_exp
-    (* Files as templates *)
-    | { pexp_desc = Pexp_constant (Pconst_string (path, loc, Some "pla_file")); _ } ->
-        let text = readFile loc path in
-        let tokens = Pla_lex.tokenize text in
-        let displacement = 5 in
-        let pla_exp = makeTemplateExp loc displacement tokens in
-        pla_exp
-    | { pexp_desc =
-          Pexp_extension
-            ( { txt = "pla_file"; _ }
-            , PStr [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (path, loc, _)); _ }, _); _ } ]
-            )
-      ; _
-      } ->
-        let text = readFile loc path in
+    | { pexp_desc = Pexp_constant (Pconst_string (text, loc, _)); _ } ->
         let tokens = Pla_lex.tokenize text in
         let displacement = 2 in
         let pla_exp = makeTemplateExp loc displacement tokens in
@@ -167,7 +142,10 @@ module PlaMapper = struct
     | _ -> expr
 end
 
-open Ppxlib
-
-let _ =
+let pla_ext =
   Extension.declare "pla" Ppxlib.Extension.Context.Expression Ast_pattern.(single_expr_payload __) PlaMapper.mapper
+
+
+let pla_rule = Ppxlib.Context_free.Rule.extension pla_ext
+
+let () = Driver.register_transformation ~rules:[ pla_rule ] "pla"
