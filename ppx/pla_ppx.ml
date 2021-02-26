@@ -129,7 +129,7 @@ module PlaMapper = struct
     let _ = loc in
     let _ = path in
     match expr with
-    | { pexp_desc = Pexp_constant (Pconst_string (text, Some "pla")); pexp_loc = loc; _ } ->
+    | { pexp_desc = Pexp_constant (Pconst_string (text, loc, Some "pla")); _ } ->
         let tokens = Pla_lex.tokenize text in
         let displacement = 5 in
         let pla_exp = makeTemplateExp loc displacement tokens in
@@ -137,11 +137,8 @@ module PlaMapper = struct
     | { pexp_desc =
           Pexp_extension
             ( { txt = "pla"; _ }
-            , PStr
-                [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (text, _)); pexp_loc = loc; _ }, _)
-                  ; _
-                  }
-                ] )
+            , PStr [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (text, loc, _)); _ }, _); _ } ]
+            )
       ; _
       } ->
         let tokens = Pla_lex.tokenize text in
@@ -149,7 +146,7 @@ module PlaMapper = struct
         let pla_exp = makeTemplateExp loc displacement tokens in
         pla_exp
     (* Files as templates *)
-    | { pexp_desc = Pexp_constant (Pconst_string (path, Some "pla_file")); pexp_loc = loc; _ } ->
+    | { pexp_desc = Pexp_constant (Pconst_string (path, loc, Some "pla_file")); _ } ->
         let text = readFile loc path in
         let tokens = Pla_lex.tokenize text in
         let displacement = 5 in
@@ -158,11 +155,8 @@ module PlaMapper = struct
     | { pexp_desc =
           Pexp_extension
             ( { txt = "pla_file"; _ }
-            , PStr
-                [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (path, _)); pexp_loc = loc; _ }, _)
-                  ; _
-                  }
-                ] )
+            , PStr [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (path, loc, _)); _ }, _); _ } ]
+            )
       ; _
       } ->
         let text = readFile loc path in
@@ -177,4 +171,3 @@ open Ppxlib
 
 let _ =
   Extension.declare "pla" Ppxlib.Extension.Context.Expression Ast_pattern.(single_expr_payload __) PlaMapper.mapper
-

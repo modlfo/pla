@@ -187,7 +187,7 @@ let join_sep_all (sep : t) (elems : 'a list) : t =
   List.iter
     (fun h ->
       h buffer ;
-      sep buffer)
+      sep buffer )
     elems
 
 
@@ -211,7 +211,7 @@ let map_sep_all (sep : t) (f : 'a -> t) (elems : 'a list) : t =
   List.iter
     (fun h ->
       (f h) buffer ;
-      sep buffer)
+      sep buffer )
     elems
 
 
