@@ -120,14 +120,6 @@ Pla does not provide advanced pretty-printing features like the ones available i
 $ opam install pla
 ```
 
-### Manual Installation
-
-```
-$ ./configure --prefix <#your ocaml directory#>
-$ make
-$ make install
-```
-
 ### Requirements
 
 #### Compiler
@@ -136,12 +128,12 @@ $ make install
 
 #### Libraries
 
-- ocaml-migrate-parsetree
-- jbuild
+- ppxlib
+- dune
 
 ## Syntax for Pla Templates
 
-Templates are delimited by `[%pla{|` and `|}]`. Alternatively, you can use the syntax `{pla|` and `|pla}` to specify templates.
+Templates are delimited by `[%pla{|` and `|}]`.
 
 ```ocaml
 let _ = [%pla{|
