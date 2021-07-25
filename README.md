@@ -103,7 +103,20 @@ let text = Pla.map_sep Pla.comma Pla.int data ;; (* produces: 1,2,3 *)
 
 #### Adding Pla to your Project
 
-In order to create templates with `[%pla{|...|}]` you need to preprocess the files with the ppx `pla.ppx` and link with the `pla` library. When using ocamlbuild this can be done by adding the following lines to the `_tags` file:
+In order to create templates with `[%pla{|...|}]` you need to preprocess the files with the ppx `pla.ppx` and link with the `pla` library.
+
+When using dune you have to add the `libraries` and `preprocess` fields as shown below.
+
+```
+(executables
+   (names main)
+   (libraries pla)
+   (preprocess (pps pla.ppx))
+)
+```
+
+
+When using ocamlbuild this can be done by adding the following lines to the `_tags` file:
 ```
 <*.ml>: package(pla.ppx)
 <*.byte>: package(pla)
@@ -143,6 +156,12 @@ You can put whatever text you want.
 The compiler will create the corresponding string.
 You don't need to escape the "quotes".
 |}];;
+```
+
+When using OCaml 4.12 or higher, you can write the templates a follows:
+
+```
+let x = {%pla|...|}        === let x = [%pla{|...|}]
 ```
 
 #### Markers
