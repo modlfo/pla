@@ -10,7 +10,7 @@ license: "MIT"
 build: [["dune" "build" "-p" name "-j" jobs]]
 
 depends: [
-  "dune" {build & >= "1.0"}
+  "dune" {build & >= "2.5"}
   "ocaml-migrate-parsetree" {build & < "2.0.0"}
   "ocaml" { >= "4.02.3" }
 ]
