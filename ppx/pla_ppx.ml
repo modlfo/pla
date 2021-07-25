@@ -24,26 +24,6 @@ module Pla_lex = Pla__.Pla_lex
 module PlaMapper = struct
   open Ast_helper
 
-  let readFile _ path =
-    if Sys.file_exists path then (
-      let file = open_in path in
-      let buffer = Buffer.create 16 in
-      try
-        while true do
-          let c = input_char file in
-          Buffer.add_char buffer c
-        done ;
-        ""
-      with
-      | End_of_file ->
-          close_in file ;
-          Buffer.contents buffer )
-    else
-      let msg = Printf.sprintf "Cannot open the file '%s' from the current directory '%s'" path (Sys.getcwd ()) in
-      prerr_endline msg ;
-      exit 1
-
-
   let buffer_id = "__buffer__"
 
   let makeLident (str : string) : Longident.t Location.loc = Longident.parse str |> Ocaml_common.Location.mknoloc

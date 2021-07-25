@@ -24,7 +24,7 @@ type t
 
 val make : (buffer -> unit) -> t
 
-(** {6 Builtin templates} *)
+(** {5 Builtin templates} *)
 
 val unit : t
 (** Empty template *)
@@ -44,7 +44,7 @@ val semi : t
 val space : t
 (** Template for a white space ' ' *)
 
-(** {6 Templates of basic types} *)
+(** {5 Templates of basic types} *)
 
 val string : string -> t
 (** [string str] makes a template from a string [str] *)
@@ -61,7 +61,7 @@ val bool : bool -> t
 val string_quoted : string -> t
 (** [string_quoted str] makes a template from a string [str] but the contents are quoted *)
 
-(** {6 Functions to wrap templates} *)
+(** {5 Functions to wrap templates} *)
 
 val wrap : t -> t -> t -> t
 (** [wrap left right t] makes new template wrapped by the [left] and [right] templates *)
@@ -75,7 +75,7 @@ val parenthesize : t -> t
 val indent : t -> t
 (** [indent t] makes an indented block with the contents of the template [t] *)
 
-(** {6 Functions to append templates} *)
+(** {5 Functions to append templates} *)
 
 val append : t -> t -> t
 (** [append t1 t2] makes a new template with the contents of [t1] followed by the contents of [t2] *)
@@ -101,7 +101,7 @@ val map_sep : t -> ('a -> t) -> 'a list -> t
 val map_sep_all : t -> ('a -> t) -> 'a list -> t
 (** [map_sep_all sep f elems] similar to [map_sep sep f elems] but also adds the separator after the last element *)
 
-(** {6 Printing of templates} *)
+(** {5 Printing of templates} *)
 
 val print : t -> string
 (** [print t] returns the contents template [t] as a string *)
