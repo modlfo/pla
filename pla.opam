@@ -6,6 +6,7 @@ synopsis: "Pla is a simple library and ppx syntax extension to create composable
 homepage: "https://modlfo.github.io/pla/"
 bug-reports: "https://github.com/modlfo/pla/issues"
 license: "MIT"
+dev-repo: "https://github.com/modlfo/pla.git"
 
 build: [["dune" "build" "-p" name "-j" jobs]]
 
