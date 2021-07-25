@@ -1,6 +1,0 @@
-S ./
-S ./ppx/**
-S ./lib/**
-B ./_build/**
-PKG ocaml-migrate-parsetree
-PKG compiler-libs.common
